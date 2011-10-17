@@ -18,8 +18,8 @@
   </licenses>
   
   <scm>
-    <url>http://j-mongo.googlecode.com/svn/trunk</url>
-    <connection>http://j-mongo.googlecode.com/svn/trunk</connection>
+    <url>git://github.com/cpopov/JMongo.git</url>
+    <connection>git://github.com/cpopov/JMongo.git</connection>
   </scm>
   
   <developers>
