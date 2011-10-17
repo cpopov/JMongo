@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>uk.co.innoltd</groupId>
+  <artifactId>jmongo</artifactId>
+  <version>1.0.0-RC1</version>
+  <packaging>jar</packaging>
+  
+  <name>JMongo</name>
+  <description>Java class to Mongo objects mapping tool</description>
+  <url>http://www.innoltd.co.uk/jmongo.html</url>
+  
+   <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <scm>
+    <url>http://j-mongo.googlecode.com/svn/trunk</url>
+    <connection>http://j-mongo.googlecode.com/svn/trunk</connection>
+  </scm>
+  
+  <developers>
+    <developer>
+      <name>Christophe Popov</name>
+      <organization>Inno Ltd.</organization>      
+    </developer>    
+  </developers>
+  
+  <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+  <dependencies>
+  	<dependency>
+		    <groupId>org.mongodb</groupId>
+		    <artifactId>mongo-java-driver</artifactId>
+		    <version>2.5.3</version>
+		    <scope>provided</scope>
+		</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<version>1.2.16</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-api</artifactId>
+  		<version>1.6.1</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-log4j12</artifactId>
+  		<version>1.6.1</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.8.2</version>
+  		<scope>test</scope>
+  	</dependency>  	
+  	<dependency>
+  		<groupId>org.mockito</groupId>
+  		<artifactId>mockito-core</artifactId>
+  		<version>1.8.5</version>
+  		<scope>test</scope>
+  	</dependency>
+  </dependencies>
+     
+</project>
