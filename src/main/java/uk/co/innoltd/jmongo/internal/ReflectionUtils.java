@@ -13,11 +13,15 @@ import java.util.Set;
 import org.bson.types.ObjectId;
 
 import uk.co.innoltd.jmongo.JMongoException;
+import uk.co.innoltd.jmongo.annotations.MongoIgnore;
 
 import com.mongodb.BasicDBList;
 
 public class ReflectionUtils {
 	public static boolean shouldPersist(Field field) {
+		if (field.getAnnotation(MongoIgnore.class)!=null) {
+			return false;
+		}
 		return !field.isSynthetic() && !Modifier.isStatic(field.getModifiers());
 	}
 

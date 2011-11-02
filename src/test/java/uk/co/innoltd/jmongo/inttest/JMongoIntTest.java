@@ -23,6 +23,8 @@ import uk.co.innoltd.jmongo.entities.EntityWithArrayOfPrimitives;
 import uk.co.innoltd.jmongo.entities.EntityWithDate;
 import uk.co.innoltd.jmongo.entities.EntityWithEmbeddedDoc;
 import uk.co.innoltd.jmongo.entities.EntityWithEnums;
+import uk.co.innoltd.jmongo.entities.EntityWithEnums.EntityType;
+import uk.co.innoltd.jmongo.entities.EntityWithIgnoredField;
 import uk.co.innoltd.jmongo.entities.EntityWithInt;
 import uk.co.innoltd.jmongo.entities.EntityWithList;
 import uk.co.innoltd.jmongo.entities.EntityWithListOfString;
@@ -32,7 +34,6 @@ import uk.co.innoltd.jmongo.entities.EntityWithSetOfGenerics;
 import uk.co.innoltd.jmongo.entities.EntityWithStatics;
 import uk.co.innoltd.jmongo.entities.EntityWithString;
 import uk.co.innoltd.jmongo.entities.ParentObject;
-import uk.co.innoltd.jmongo.entities.EntityWithEnums.EntityType;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -308,7 +309,7 @@ public class JMongoIntTest {
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertNull(entity.getObjectId());
 	}
-	
+
 	@Test
 	public void shouldIgnoreMissingObject() throws Exception {
 		DBCollection collection = db.getCollection("entity");
@@ -318,5 +319,22 @@ public class JMongoIntTest {
 		EntityWithEmbeddedDoc entity = jMongo.fromDBObject(EntityWithEmbeddedDoc.class, dbObject);
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertNull(entity.getEntity());
+	}
+
+	@Test
+	public void shouldIgnoreIgnoredProperty() throws Exception {
+		EntityWithIgnoredField entity = new EntityWithIgnoredField("test", 1.23);
+		DBObject dbObject = jMongo.toDBObject(entity);
+		assertEquals(entity.getString(), dbObject.get("string"));
+		assertNull(dbObject.get("ignored"));
+
+		DBCollection collection = db.getCollection("entity");
+		dbObject = new BasicDBObject("string", "test");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		entity = jMongo.fromDBObject(EntityWithIgnoredField.class, dbObject);
+		assertEquals(entity.get_id(), dbObject.get("_id"));
+		assertEquals("test", entity.getString());
+		assertNull(entity.getIgnored());
 	}
 }
