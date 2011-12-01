@@ -24,8 +24,10 @@ import uk.co.innoltd.jmongo.entities.EntityWithDate;
 import uk.co.innoltd.jmongo.entities.EntityWithEmbeddedDoc;
 import uk.co.innoltd.jmongo.entities.EntityWithEnums;
 import uk.co.innoltd.jmongo.entities.EntityWithEnums.EntityType;
+import uk.co.innoltd.jmongo.entities.EntityWithBoolean;
 import uk.co.innoltd.jmongo.entities.EntityWithIgnoredField;
 import uk.co.innoltd.jmongo.entities.EntityWithInt;
+import uk.co.innoltd.jmongo.entities.EntityWithInteger;
 import uk.co.innoltd.jmongo.entities.EntityWithList;
 import uk.co.innoltd.jmongo.entities.EntityWithListOfString;
 import uk.co.innoltd.jmongo.entities.EntityWithMap;
@@ -80,6 +82,34 @@ public class JMongoIntTest {
 		entity = jMongo.fromDBObject(EntityWithInt.class, dbObject);
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertEquals(12, entity.getNumber());
+	}
+	
+	@Test
+	public void canSaveIntegerProperty() throws Exception {
+		EntityWithInteger entity = new EntityWithInteger(12);
+		DBObject dbObject = jMongo.toDBObject(entity);
+		DBCollection collection = db.getCollection("entity");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		assertNotNull(dbObject.get("_id"));
+		assertEquals(12, dbObject.get("number"));
+		entity = jMongo.fromDBObject(EntityWithInteger.class, dbObject);
+		assertEquals(entity.get_id(), dbObject.get("_id"));
+		assertEquals(12, entity.getNumber());
+	}
+	
+	@Test
+	public void canSaveBooleanProperty() throws Exception {
+		EntityWithBoolean entity = new EntityWithBoolean(true);
+		DBObject dbObject = jMongo.toDBObject(entity);
+		DBCollection collection = db.getCollection("entity");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		assertNotNull(dbObject.get("_id"));
+		assertEquals(true, dbObject.get("bool"));
+		entity = jMongo.fromDBObject(EntityWithBoolean.class, dbObject);
+		assertEquals(entity.get_id(), dbObject.get("_id"));
+		assertEquals(true, entity.getBool());
 	}
 
 	@Test

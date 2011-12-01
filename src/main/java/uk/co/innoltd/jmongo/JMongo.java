@@ -19,6 +19,9 @@ public class JMongo {
 	private ClassDescriptorsCache cache = new ClassDescriptorsCache();
 
 	public DBObject toDBObject(Object obj) {
+		if (obj==null) {
+			return null;
+		}
 		DBObject dbObject = new BasicDBObject();
 		ClassDescriptor classDescriptor = cache.get(obj.getClass());
 		for (FieldDescriptor fieldDescriptor : classDescriptor.getFields()) {
@@ -30,7 +33,7 @@ public class JMongo {
 	@SuppressWarnings("rawtypes")
 	public Object toDBObjectRecursive(Object object, FieldDescriptor fieldDescriptor) {
 		if (fieldDescriptor.isArray()) {
-			if (fieldDescriptor.getField().getType().getComponentType().isPrimitive()) {
+			if (ReflectionUtils.isSimpleClass(fieldDescriptor.getField().getType().getComponentType())) {
 				return fieldDescriptor.getFieldValue(object);
 			} else {
 				Object[] array = (Object[]) fieldDescriptor.getFieldValue(object);
@@ -77,6 +80,9 @@ public class JMongo {
 
 	@SuppressWarnings("unchecked")
 	public <T> T fromDBObject(Class<T> clazz, DBObject dbObject) {
+		if (dbObject==null) {
+			return null;
+		}
 		ClassDescriptor classDescriptor = cache.get(clazz);
 		Object object = classDescriptor.newInstance();
 		for (FieldDescriptor fieldDescriptor : classDescriptor.getFields()) {
@@ -108,7 +114,7 @@ public class JMongo {
 			}
 			List list = new ArrayList();
 			for (Object listEl : dbList) {
-				if (fieldType.getComponentType().isPrimitive()) {
+				if (ReflectionUtils.isSimpleClass(listEl.getClass())) {
 					list.add(listEl);
 				} else {
 					list.add(fromDBObject((Class<Object>) fieldType.getComponentType(), (DBObject) listEl));

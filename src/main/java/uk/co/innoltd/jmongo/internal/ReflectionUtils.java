@@ -33,7 +33,8 @@ public class ReflectionUtils {
 	public static boolean isSimpleClass(Class<?> fieldClass) {
 		boolean isSimple = fieldClass.isPrimitive() || fieldClass.equals(String.class)
 				|| Number.class.isAssignableFrom(fieldClass) || Date.class.isAssignableFrom(fieldClass)
-				|| ObjectId.class.equals(fieldClass) || fieldClass.isEnum();
+				|| ObjectId.class.equals(fieldClass) || fieldClass.isEnum()
+				|| Boolean.class.isAssignableFrom(fieldClass);
 		return isSimple;
 	}
 
