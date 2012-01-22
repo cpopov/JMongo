@@ -99,7 +99,11 @@ public class JMongo {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Object fromDBObjectRecursive(Object dbObject, FieldDescriptor fieldDescriptor) {
 		if (dbObject==null) {
-			return null;
+			if (fieldDescriptor.isPrimitive()) {
+				return 0;
+			} else {
+				return null;
+			}
 		}
 		Class<?> fieldType = fieldDescriptor.getField().getType();
 		if (fieldDescriptor.isSimple()) {

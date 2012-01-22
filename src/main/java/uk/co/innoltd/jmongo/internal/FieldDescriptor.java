@@ -11,6 +11,7 @@ import uk.co.innoltd.jmongo.JMongoException;
 public class FieldDescriptor {
 	private Field field;
 	private boolean simple;
+	private boolean primitive;
 	private boolean array;
 	private boolean iterable;
 	private boolean list;
@@ -37,6 +38,9 @@ public class FieldDescriptor {
 			this.array = true;
 		} else if (ReflectionUtils.isSimpleField(field)) {
 			this.simple = true;
+			if (ReflectionUtils.isPrimitive(field)) {
+				this.primitive = true;
+			}
 		} else {
 			this.object = true;
 		}
@@ -69,6 +73,10 @@ public class FieldDescriptor {
 
 	public boolean isSimple() {
 		return simple;
+	}
+
+	public boolean isPrimitive() {
+		return primitive;
 	}
 
 	public boolean isArray() {

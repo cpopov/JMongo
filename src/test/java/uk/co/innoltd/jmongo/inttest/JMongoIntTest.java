@@ -367,4 +367,17 @@ public class JMongoIntTest {
 		assertEquals("test", entity.getString());
 		assertNull(entity.getIgnored());
 	}
+	
+	@Test
+	public void shouldDefaultToZeroForPrimitives() throws Exception {
+		DBObject dbObject = new BasicDBObject();
+		DBCollection collection = db.getCollection("entity");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		assertNotNull(dbObject.get("_id"));
+		assertNull(dbObject.get("number"));
+		EntityWithInt entity = jMongo.fromDBObject(EntityWithInt.class, dbObject);
+		assertEquals(entity.get_id(), dbObject.get("_id"));
+		assertEquals(0, entity.getNumber());
+	}
 }
