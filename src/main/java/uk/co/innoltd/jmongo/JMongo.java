@@ -46,11 +46,13 @@ public class JMongo {
 		} else if (fieldDescriptor.isIterable()) {
 			Iterable col = (Iterable) fieldDescriptor.getFieldValue(object);
 			BasicDBList fieldObj = new BasicDBList();
-			for (Object el : col) {
-				if (ReflectionUtils.isSimpleClass(el.getClass())) {
-					fieldObj.add(el);
-				} else {
-					fieldObj.add(toDBObject(el));
+			if (col!=null) {
+				for (Object el : col) {
+					if (ReflectionUtils.isSimpleClass(el.getClass())) {
+						fieldObj.add(el);
+					} else {
+						fieldObj.add(toDBObject(el));
+					}
 				}
 			}
 			return fieldObj;
@@ -109,7 +111,7 @@ public class JMongo {
 		if (fieldDescriptor.isSimple()) {
 			if (fieldDescriptor.isEnum()) {
 				return Enum.valueOf((Class<Enum>) fieldType, (String) dbObject);
-			}
+			}			
 			return dbObject;
 		} else if (fieldDescriptor.isArray()) {
 			BasicDBList dbList = (BasicDBList) dbObject;

@@ -227,7 +227,7 @@ public class JMongoIntTest {
 		dbObject = collection.findOne();
 		assertNotNull(dbObject.get("_id"));
 		BasicDBList dbList = (BasicDBList) dbObject.get("list");
-		assertEquals(2, list.size());
+		assertEquals(2, dbList.size());
 		assertEquals("S1", dbList.get(0));
 		assertEquals("S2", dbList.get(1));
 		entity = jMongo.fromDBObject(EntityWithListOfString.class, dbObject);
@@ -235,6 +235,22 @@ public class JMongoIntTest {
 		assertEquals(2, entity.getList().size());
 		assertEquals("S1", entity.getList().get(0));
 		assertEquals("S2", entity.getList().get(1));
+	}
+	
+	@Test
+	public void canSaveNullList() throws Exception {		
+		EntityWithListOfString entity = new EntityWithListOfString(null);
+		DBObject dbObject = jMongo.toDBObject(entity);
+		DBCollection collection = db.getCollection("entity");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		assertNotNull(dbObject.get("_id"));
+		BasicDBList dbList = (BasicDBList) dbObject.get("list");
+		assertEquals(0,dbList.size());
+		
+		entity = jMongo.fromDBObject(EntityWithListOfString.class, dbObject);
+		assertEquals(dbObject.get("_id"), entity.get_id());
+		assertEquals(0,entity.getList().size());		
 	}
 
 	@Test
@@ -380,4 +396,5 @@ public class JMongoIntTest {
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertEquals(0, entity.getNumber());
 	}
+	
 }
