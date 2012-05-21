@@ -32,6 +32,9 @@ public class JMongo {
 
 	@SuppressWarnings("rawtypes")
 	public Object toDBObjectRecursive(Object object, FieldDescriptor fieldDescriptor) {
+		if (object==null) {
+			return null;
+		}
 		if (fieldDescriptor.isArray()) {
 			if (ReflectionUtils.isSimpleClass(fieldDescriptor.getField().getType().getComponentType())) {
 				return fieldDescriptor.getFieldValue(object);
@@ -57,9 +60,12 @@ public class JMongo {
 			}
 			return fieldObj;
 		} else if (fieldDescriptor.isObject()) {
+			Object fieldValue = fieldDescriptor.getFieldValue(object);
+			if (fieldValue==null) {
+				return null;
+			}
 			DBObject dbObject = new BasicDBObject();
-			for (FieldDescriptor childDescriptor : fieldDescriptor.getChildren()) {
-				Object fieldValue = fieldDescriptor.getFieldValue(object);
+			for (FieldDescriptor childDescriptor : fieldDescriptor.getChildren()) {				
 				dbObject.put(childDescriptor.getName(), toDBObjectRecursive(fieldValue, childDescriptor));
 			}
 			return dbObject;

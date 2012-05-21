@@ -269,6 +269,22 @@ public class JMongoIntTest {
 		assertEquals(dbObject.get("_id"), entity.get_id());
 		assertEquals("string", entity.getEntity().getString());
 	}
+	
+	@Test
+	public void canSaveEmbeddedDocuments_withNullValue() throws Exception {		
+		Date date = new Date();
+		EntityWithEmbeddedDoc entity = new EntityWithEmbeddedDoc(date, null);
+		DBObject dbObject = jMongo.toDBObject(entity);
+		DBCollection collection = db.getCollection("entity");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		assertNotNull(dbObject.get("_id"));
+		assertNotNull(dbObject.get("date"));
+		assertNull(dbObject.get("entity"));
+		entity = jMongo.fromDBObject(EntityWithEmbeddedDoc.class, dbObject);
+		assertEquals(dbObject.get("_id"), entity.get_id());
+		assertNull(entity.getEntity());
+	}
 
 	@Test
 	public void canSaveSetOfDocuments() throws Exception {

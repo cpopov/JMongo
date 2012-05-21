@@ -22,9 +22,10 @@
     </license>
   </licenses>
   
-  <scm>
-    <url>git://github.com/cpopov/JMongo.git</url>
-    <connection>git://github.com/cpopov/JMongo.git</connection>
+  <scm>    
+    <connection>scm:git:git@github.com:cpopov/JMongo.git</connection>
+    <developerConnection>scm:git:git@github.com:cpopov/JMongo.git</developerConnection>
+    <url>git@github.com:cpopov/JMongo.git</url>
   </scm>
   
   <developers>
