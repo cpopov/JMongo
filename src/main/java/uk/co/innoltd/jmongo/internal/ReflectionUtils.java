@@ -19,7 +19,7 @@ import com.mongodb.BasicDBList;
 
 public class ReflectionUtils {
 	public static boolean shouldPersist(Field field) {
-		if (field.getAnnotation(MongoIgnore.class)!=null) {
+		if (field.getAnnotation(MongoIgnore.class) != null) {
 			return false;
 		}
 		return !field.isSynthetic() && !Modifier.isStatic(field.getModifiers());
@@ -42,18 +42,26 @@ public class ReflectionUtils {
 		return field.getType().isPrimitive();
 	}
 
+	public static boolean isNumber(Field field) {
+		return Number.class.isAssignableFrom(field.getType());
+	}
+
+	public static boolean isBoolean(Field field) {
+		return Boolean.class.isAssignableFrom(field.getType());
+	}
+
 	public static boolean isIterable(Field field) {
 		return Iterable.class.isAssignableFrom(field.getType());
 	}
-	
+
 	public static boolean isList(Field field) {
 		return List.class.isAssignableFrom(field.getType());
 	}
-	
+
 	public static boolean isSet(Field field) {
 		return Set.class.isAssignableFrom(field.getType());
 	}
-	
+
 	public static boolean isMap(Field field) {
 		return Map.class.isAssignableFrom(field.getType());
 	}
@@ -152,7 +160,7 @@ public class ReflectionUtils {
 		}
 		return itemsType;
 	}
-	
+
 	public static Class<?> genericTypeOfMapValue(Field field) {
 		ParameterizedType paramzType = (ParameterizedType) field.getGenericType();
 		Type genericType = paramzType.getActualTypeArguments()[1];

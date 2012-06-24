@@ -1,6 +1,7 @@
 package uk.co.innoltd.jmongo.inttest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +27,7 @@ import uk.co.innoltd.jmongo.entities.EntityWithEnums;
 import uk.co.innoltd.jmongo.entities.EntityWithEnums.EntityType;
 import uk.co.innoltd.jmongo.entities.EntityWithBoolean;
 import uk.co.innoltd.jmongo.entities.EntityWithIgnoredField;
-import uk.co.innoltd.jmongo.entities.EntityWithInt;
+import uk.co.innoltd.jmongo.entities.EntityWithPrimitives;
 import uk.co.innoltd.jmongo.entities.EntityWithInteger;
 import uk.co.innoltd.jmongo.entities.EntityWithList;
 import uk.co.innoltd.jmongo.entities.EntityWithListOfString;
@@ -71,17 +72,23 @@ public class JMongoIntTest {
 	}
 
 	@Test
-	public void canSaveIntProperty() throws Exception {
-		EntityWithInt entity = new EntityWithInt(12);
+	public void canSavePrimitives() throws Exception {
+		EntityWithPrimitives entity = new EntityWithPrimitives((byte)12,13,14.5f,true);
 		DBObject dbObject = jMongo.toDBObject(entity);
 		DBCollection collection = db.getCollection("entity");
 		collection.save(dbObject);
 		dbObject = collection.findOne();
 		assertNotNull(dbObject.get("_id"));
-		assertEquals(12, dbObject.get("number"));
-		entity = jMongo.fromDBObject(EntityWithInt.class, dbObject);
+		assertEquals(13, dbObject.get("number"));
+		assertEquals(12, dbObject.get("a"));
+		assertEquals(14.5, dbObject.get("f"));
+		assertEquals(true,dbObject.get("b"));
+		entity = jMongo.fromDBObject(EntityWithPrimitives.class, dbObject);
 		assertEquals(entity.get_id(), dbObject.get("_id"));
-		assertEquals(12, entity.getNumber());
+		assertEquals(13, entity.getNumber());
+		assertEquals(12, entity.getA());
+		assertTrue(14.5f == entity.getF());
+		assertTrue(entity.isB());
 	}
 	
 	@Test
@@ -408,9 +415,16 @@ public class JMongoIntTest {
 		dbObject = collection.findOne();
 		assertNotNull(dbObject.get("_id"));
 		assertNull(dbObject.get("number"));
-		EntityWithInt entity = jMongo.fromDBObject(EntityWithInt.class, dbObject);
+		assertNull(dbObject.get("a"));
+		assertNull(dbObject.get("b"));
+		assertNull(dbObject.get("f"));
+		
+		EntityWithPrimitives entity = jMongo.fromDBObject(EntityWithPrimitives.class, dbObject);
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertEquals(0, entity.getNumber());
+		assertEquals(0, entity.getA());
+		assertTrue(0.0f == entity.getF());
+		assertFalse(entity.isB());
 	}
 	
 }

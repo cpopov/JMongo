@@ -12,6 +12,8 @@ public class FieldDescriptor {
 	private Field field;
 	private boolean simple;
 	private boolean primitive;
+	private boolean number;
+	private boolean isBoolean;
 	private boolean array;
 	private boolean iterable;
 	private boolean list;
@@ -40,6 +42,12 @@ public class FieldDescriptor {
 			this.simple = true;
 			if (ReflectionUtils.isPrimitive(field)) {
 				this.primitive = true;
+			}
+			if (ReflectionUtils.isNumber(field)) {
+				this.number = true;
+			}
+			if (ReflectionUtils.isBoolean(field)) {
+				this.isBoolean = true;
 			}
 		} else {
 			this.object = true;
@@ -107,6 +115,14 @@ public class FieldDescriptor {
 		return isEnum;
 	}
 
+	public boolean isNumber() {
+		return number;
+	}
+
+	public boolean isBoolean() {
+		return isBoolean;
+	}
+
 	public String getName() {
 		return field.getName();
 	}
@@ -152,5 +168,44 @@ public class FieldDescriptor {
 	@Override
 	public String toString() {
 		return field.getName();
+	}
+
+	public Object getDefaultValue() {
+		Class<?> fieldType = getField().getType();
+		if (isPrimitive()) {
+			if (fieldType.getName().equals("byte")) {
+				return (byte) 0;
+			}
+			if (fieldType.getName().equals("float")) {
+				return 0.0f;
+			}
+			if (fieldType.getName().equals("double")) {
+				return 0.0d;
+			}
+			if (fieldType.getName().equals("boolean")) {
+				return false;
+			}
+			return 0;
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Object getSimpleValue(Object dbObject) {
+		Class<?> fieldType = getField().getType();
+		if (isEnum()) {
+			return Enum.valueOf((Class<Enum>) fieldType, (String) dbObject);
+		}
+		if (isPrimitive()) {
+			if (fieldType.getName().equals("byte")) {
+				return ((Number) dbObject).byteValue();
+			}
+			if (fieldType.getName().equals("float")) {
+				return ((Number) dbObject).floatValue();
+			}
+		}
+
+		return dbObject;
 	}
 }

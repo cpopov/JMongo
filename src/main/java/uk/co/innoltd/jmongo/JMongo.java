@@ -19,7 +19,7 @@ public class JMongo {
 	private ClassDescriptorsCache cache = new ClassDescriptorsCache();
 
 	public DBObject toDBObject(Object obj) {
-		if (obj==null) {
+		if (obj == null) {
 			return null;
 		}
 		DBObject dbObject = new BasicDBObject();
@@ -32,7 +32,7 @@ public class JMongo {
 
 	@SuppressWarnings("rawtypes")
 	public Object toDBObjectRecursive(Object object, FieldDescriptor fieldDescriptor) {
-		if (object==null) {
+		if (object == null) {
 			return null;
 		}
 		if (fieldDescriptor.isArray()) {
@@ -49,7 +49,7 @@ public class JMongo {
 		} else if (fieldDescriptor.isIterable()) {
 			Iterable col = (Iterable) fieldDescriptor.getFieldValue(object);
 			BasicDBList fieldObj = new BasicDBList();
-			if (col!=null) {
+			if (col != null) {
 				for (Object el : col) {
 					if (ReflectionUtils.isSimpleClass(el.getClass())) {
 						fieldObj.add(el);
@@ -61,11 +61,11 @@ public class JMongo {
 			return fieldObj;
 		} else if (fieldDescriptor.isObject()) {
 			Object fieldValue = fieldDescriptor.getFieldValue(object);
-			if (fieldValue==null) {
+			if (fieldValue == null) {
 				return null;
 			}
 			DBObject dbObject = new BasicDBObject();
-			for (FieldDescriptor childDescriptor : fieldDescriptor.getChildren()) {				
+			for (FieldDescriptor childDescriptor : fieldDescriptor.getChildren()) {
 				dbObject.put(childDescriptor.getName(), toDBObjectRecursive(fieldValue, childDescriptor));
 			}
 			return dbObject;
@@ -88,7 +88,7 @@ public class JMongo {
 
 	@SuppressWarnings("unchecked")
 	public <T> T fromDBObject(Class<T> clazz, DBObject dbObject) {
-		if (dbObject==null) {
+		if (dbObject == null) {
 			return null;
 		}
 		ClassDescriptor classDescriptor = cache.get(clazz);
@@ -106,19 +106,12 @@ public class JMongo {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Object fromDBObjectRecursive(Object dbObject, FieldDescriptor fieldDescriptor) {
-		if (dbObject==null) {
-			if (fieldDescriptor.isPrimitive()) {
-				return 0;
-			} else {
-				return null;
-			}
+		if (dbObject == null) {
+			return fieldDescriptor.getDefaultValue();
 		}
 		Class<?> fieldType = fieldDescriptor.getField().getType();
 		if (fieldDescriptor.isSimple()) {
-			if (fieldDescriptor.isEnum()) {
-				return Enum.valueOf((Class<Enum>) fieldType, (String) dbObject);
-			}			
-			return dbObject;
+			return fieldDescriptor.getSimpleValue(dbObject);
 		} else if (fieldDescriptor.isArray()) {
 			BasicDBList dbList = (BasicDBList) dbObject;
 			if (fieldType.getComponentType().isPrimitive()) {
@@ -163,9 +156,11 @@ public class JMongo {
 			for (Object key : dbMap.keySet()) {
 				Object mapEl = dbMap.get(key.toString());
 				if (ReflectionUtils.isSimpleClass(mapEl.getClass())) {
-					map.put(key,mapEl);
+					map.put(key, mapEl);
 				} else {
-					map.put(key,fromDBObject(ReflectionUtils.genericTypeOfMapValue(fieldDescriptor.getField()), (DBObject) mapEl));
+					map.put(key,
+							fromDBObject(ReflectionUtils.genericTypeOfMapValue(fieldDescriptor.getField()),
+									(DBObject) mapEl));
 				}
 			}
 			return map;
