@@ -176,6 +176,12 @@ public class FieldDescriptor {
 			if (fieldType.getName().equals("byte")) {
 				return (byte) 0;
 			}
+			if (fieldType.getName().equals("short")) {
+				return (short) 0;
+			}
+			if (fieldType.getName().equals("char")) {
+				return (char) 0;
+			}
 			if (fieldType.getName().equals("float")) {
 				return 0.0f;
 			}
@@ -201,8 +207,14 @@ public class FieldDescriptor {
 			if (fieldType.getName().equals("byte")) {
 				return ((Number) dbObject).byteValue();
 			}
+			if (fieldType.getName().equals("short")) {
+				return ((Number) dbObject).shortValue();
+			}
 			if (fieldType.getName().equals("float")) {
 				return ((Number) dbObject).floatValue();
+			}
+			if (fieldType.getName().equals("char")) {
+				return ((String) dbObject).charAt(0);
 			}
 		}
 

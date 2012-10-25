@@ -21,18 +21,18 @@ import uk.co.innoltd.jmongo.JMongo;
 import uk.co.innoltd.jmongo.entities.ChildObject;
 import uk.co.innoltd.jmongo.entities.EntityWithArray;
 import uk.co.innoltd.jmongo.entities.EntityWithArrayOfPrimitives;
+import uk.co.innoltd.jmongo.entities.EntityWithBoolean;
 import uk.co.innoltd.jmongo.entities.EntityWithDate;
 import uk.co.innoltd.jmongo.entities.EntityWithEmbeddedDoc;
 import uk.co.innoltd.jmongo.entities.EntityWithEnums;
 import uk.co.innoltd.jmongo.entities.EntityWithEnums.EntityType;
-import uk.co.innoltd.jmongo.entities.EntityWithBoolean;
 import uk.co.innoltd.jmongo.entities.EntityWithIgnoredField;
-import uk.co.innoltd.jmongo.entities.EntityWithPrimitives;
 import uk.co.innoltd.jmongo.entities.EntityWithInteger;
 import uk.co.innoltd.jmongo.entities.EntityWithList;
 import uk.co.innoltd.jmongo.entities.EntityWithListOfString;
 import uk.co.innoltd.jmongo.entities.EntityWithMap;
 import uk.co.innoltd.jmongo.entities.EntityWithObjectId;
+import uk.co.innoltd.jmongo.entities.EntityWithPrimitives;
 import uk.co.innoltd.jmongo.entities.EntityWithSetOfGenerics;
 import uk.co.innoltd.jmongo.entities.EntityWithStatics;
 import uk.co.innoltd.jmongo.entities.EntityWithString;
@@ -73,24 +73,32 @@ public class JMongoIntTest {
 
 	@Test
 	public void canSavePrimitives() throws Exception {
-		EntityWithPrimitives entity = new EntityWithPrimitives((byte)12,13,14.5f,true);
+		EntityWithPrimitives entity = new EntityWithPrimitives((byte) 12, 'c', (short) 11, 13, 23l, 14.5f, 16.3d, true);
 		DBObject dbObject = jMongo.toDBObject(entity);
 		DBCollection collection = db.getCollection("entity");
 		collection.save(dbObject);
 		dbObject = collection.findOne();
 		assertNotNull(dbObject.get("_id"));
+		assertEquals("c", dbObject.get("c"));
+		assertEquals(11, dbObject.get("sh"));
 		assertEquals(13, dbObject.get("number"));
 		assertEquals(12, dbObject.get("a"));
+		assertEquals(23l, dbObject.get("l"));
 		assertEquals(14.5, dbObject.get("f"));
-		assertEquals(true,dbObject.get("b"));
+		assertEquals(16.3d, dbObject.get("d"));
+		assertEquals(true, dbObject.get("b"));
 		entity = jMongo.fromDBObject(EntityWithPrimitives.class, dbObject);
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertEquals(13, entity.getNumber());
+		assertEquals('c', entity.getC());
 		assertEquals(12, entity.getA());
+		assertEquals(11, entity.getSh());
+		assertEquals(23l, entity.getL());
 		assertTrue(14.5f == entity.getF());
+		assertTrue(16.3d == entity.getD());
 		assertTrue(entity.isB());
 	}
-	
+
 	@Test
 	public void canSaveIntegerProperty() throws Exception {
 		EntityWithInteger entity = new EntityWithInteger(12);
@@ -104,7 +112,7 @@ public class JMongoIntTest {
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertEquals(12, entity.getNumber());
 	}
-	
+
 	@Test
 	public void canSaveBooleanProperty() throws Exception {
 		EntityWithBoolean entity = new EntityWithBoolean(true);
@@ -243,9 +251,9 @@ public class JMongoIntTest {
 		assertEquals("S1", entity.getList().get(0));
 		assertEquals("S2", entity.getList().get(1));
 	}
-	
+
 	@Test
-	public void canSaveNullList() throws Exception {		
+	public void canSaveNullList() throws Exception {
 		EntityWithListOfString entity = new EntityWithListOfString(null);
 		DBObject dbObject = jMongo.toDBObject(entity);
 		DBCollection collection = db.getCollection("entity");
@@ -253,11 +261,11 @@ public class JMongoIntTest {
 		dbObject = collection.findOne();
 		assertNotNull(dbObject.get("_id"));
 		BasicDBList dbList = (BasicDBList) dbObject.get("list");
-		assertEquals(0,dbList.size());
-		
+		assertEquals(0, dbList.size());
+
 		entity = jMongo.fromDBObject(EntityWithListOfString.class, dbObject);
 		assertEquals(dbObject.get("_id"), entity.get_id());
-		assertEquals(0,entity.getList().size());		
+		assertEquals(0, entity.getList().size());
 	}
 
 	@Test
@@ -276,9 +284,9 @@ public class JMongoIntTest {
 		assertEquals(dbObject.get("_id"), entity.get_id());
 		assertEquals("string", entity.getEntity().getString());
 	}
-	
+
 	@Test
-	public void canSaveEmbeddedDocuments_withNullValue() throws Exception {		
+	public void canSaveEmbeddedDocuments_withNullValue() throws Exception {
 		Date date = new Date();
 		EntityWithEmbeddedDoc entity = new EntityWithEmbeddedDoc(date, null);
 		DBObject dbObject = jMongo.toDBObject(entity);
@@ -406,7 +414,7 @@ public class JMongoIntTest {
 		assertEquals("test", entity.getString());
 		assertNull(entity.getIgnored());
 	}
-	
+
 	@Test
 	public void shouldDefaultToZeroForPrimitives() throws Exception {
 		DBObject dbObject = new BasicDBObject();
@@ -418,7 +426,7 @@ public class JMongoIntTest {
 		assertNull(dbObject.get("a"));
 		assertNull(dbObject.get("b"));
 		assertNull(dbObject.get("f"));
-		
+
 		EntityWithPrimitives entity = jMongo.fromDBObject(EntityWithPrimitives.class, dbObject);
 		assertEquals(entity.get_id(), dbObject.get("_id"));
 		assertEquals(0, entity.getNumber());
@@ -426,5 +434,5 @@ public class JMongoIntTest {
 		assertTrue(0.0f == entity.getF());
 		assertFalse(entity.isB());
 	}
-	
+
 }

@@ -14,7 +14,6 @@ public class ClassDescriptorsCache {
 		ClassDescriptor descriptor = descriptors.get(clazz.getCanonicalName());
 		if (descriptor == null) {
 			descriptor = ClassDescriptor.get(clazz);
-			// TODO see if there is any danger here when multithreaded access.
 			descriptors.put(clazz.getCanonicalName(), descriptor);
 		}
 		return descriptor;

@@ -5,17 +5,25 @@ import org.bson.types.ObjectId;
 public class EntityWithPrimitives {
 	private ObjectId _id;
 	private byte a;
+	private char c;
+	private short sh;
 	private int number;
+	private long l;
 	private float f;
+	private double d;
 	private boolean b;
 
 	public EntityWithPrimitives() {
 	}
 
-	public EntityWithPrimitives(byte a, int number, float f, boolean b) {
+	public EntityWithPrimitives(byte a, char c, short sh, int number, long l, float f, double d, boolean b) {
 		this.a = a;
+		this.c = c;
+		this.sh = sh;
 		this.number = number;
+		this.l = l;
 		this.f = f;
+		this.d = d;
 		this.b = b;
 	}
 
@@ -57,6 +65,38 @@ public class EntityWithPrimitives {
 
 	public void setB(boolean b) {
 		this.b = b;
+	}
+
+	public char getC() {
+		return c;
+	}
+
+	public void setC(char c) {
+		this.c = c;
+	}
+
+	public short getSh() {
+		return sh;
+	}
+
+	public void setSh(short sh) {
+		this.sh = sh;
+	}
+
+	public long getL() {
+		return l;
+	}
+
+	public void setL(long l) {
+		this.l = l;
+	}
+
+	public double getD() {
+		return d;
+	}
+
+	public void setD(double d) {
+		this.d = d;
 	}
 
 }
