@@ -43,7 +43,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 
 public class JMongoIntTest {
 	private JMongo jMongo;
@@ -51,7 +51,7 @@ public class JMongoIntTest {
 
 	@Before
 	public void setup() throws Exception {
-		Mongo m = new Mongo("localhost", 27017);
+		MongoClient m = new MongoClient("localhost", 27017);
 		db = m.getDB("jmongo-test");
 		db.dropDatabase();
 		jMongo = new JMongo();
@@ -187,6 +187,28 @@ public class JMongoIntTest {
 		assertEquals(2, entity.getArray().length);
 		assertEquals("S1", entity.getArray()[0].getString());
 		assertEquals("S2", entity.getArray()[1].getString());
+	}
+	
+	@Test
+	public void canSaveNullInArray() throws Exception {
+		EntityWithString[] array = new EntityWithString[2];
+		array[0] = new EntityWithString("S1");
+		array[1] = null;
+		EntityWithArray entity = new EntityWithArray(array);
+		DBObject dbObject = jMongo.toDBObject(entity);
+		DBCollection collection = db.getCollection("entity");
+		collection.save(dbObject);
+		dbObject = collection.findOne();
+		assertNotNull(dbObject.get("_id"));
+		BasicDBList list = (BasicDBList) dbObject.get("array");
+		assertEquals(2, list.size());
+		assertEquals("S1", ((DBObject) list.get(0)).get("string"));
+		assertNull(list.get(1));
+		entity = jMongo.fromDBObject(EntityWithArray.class, dbObject);
+		assertEquals(dbObject.get("_id"), entity.get_id());
+		assertEquals(2, entity.getArray().length);
+		assertEquals("S1", entity.getArray()[0].getString());
+		assertNull(entity.getArray()[1]);
 	}
 
 	@Test

@@ -119,7 +119,7 @@ public class JMongo {
 			}
 			List list = new ArrayList();
 			for (Object listEl : dbList) {
-				if (ReflectionUtils.isSimpleClass(listEl.getClass())) {
+				if (listEl==null || ReflectionUtils.isSimpleClass(listEl.getClass())) {
 					list.add(listEl);
 				} else {
 					list.add(fromDBObject((Class<Object>) fieldType.getComponentType(), (DBObject) listEl));
