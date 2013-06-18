@@ -370,6 +370,7 @@ public class JMongoIntTest {
 		map.put("obj1", obj1);
 		EntityWithString obj2 = new EntityWithString("S2");
 		map.put("obj2", obj2);
+		map.put("objnull", null);
 		EntityWithMap entity = new EntityWithMap(map);
 		DBObject dbObject = jMongo.toDBObject(entity);
 		DBCollection collection = db.getCollection("entity");
@@ -377,14 +378,16 @@ public class JMongoIntTest {
 		dbObject = collection.findOne();
 		assertNotNull(dbObject.get("_id"));
 		DBObject dbMap = (DBObject) dbObject.get("map");
-		assertEquals(2, map.size());
+		assertEquals(3, map.size());
 		assertEquals("S1", ((DBObject) dbMap.get("obj1")).get("string"));
 		assertEquals("S2", ((DBObject) dbMap.get("obj2")).get("string"));
+		assertNull(dbMap.get("objnull"));
 		entity = jMongo.fromDBObject(EntityWithMap.class, dbObject);
 		assertEquals(dbObject.get("_id"), entity.get_id());
-		assertEquals(2, entity.getMap().size());
+		assertEquals(3, entity.getMap().size());
 		assertEquals(obj1, entity.getMap().get("obj1"));
 		assertEquals(obj2, entity.getMap().get("obj2"));
+		assertNull(entity.getMap().get("objnull"));
 	}
 
 	@Test

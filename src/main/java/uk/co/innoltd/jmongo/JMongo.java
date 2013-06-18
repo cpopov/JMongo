@@ -74,7 +74,7 @@ public class JMongo {
 			Map map = (Map) fieldDescriptor.getFieldValue(object);
 			for (Object key : map.keySet()) {
 				Object el = map.get(key);
-				if (ReflectionUtils.isSimpleClass(el.getClass())) {
+				if (el==null || ReflectionUtils.isSimpleClass(el.getClass())) {
 					dbObject.put(key.toString(), el);
 				} else {
 					dbObject.put(key.toString(), toDBObject(el));
@@ -155,7 +155,7 @@ public class JMongo {
 			Map map = (Map) fieldDescriptor.newInstance();
 			for (Object key : dbMap.keySet()) {
 				Object mapEl = dbMap.get(key.toString());
-				if (ReflectionUtils.isSimpleClass(mapEl.getClass())) {
+				if (mapEl==null || ReflectionUtils.isSimpleClass(mapEl.getClass())) {
 					map.put(key, mapEl);
 				} else {
 					map.put(key,
